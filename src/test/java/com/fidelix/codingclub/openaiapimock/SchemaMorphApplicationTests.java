@@ -1,4 +1,4 @@
-package com.fidelix.coding_club_a.schema_morph;
+package com.fidelix.codingclub.openaiapimock;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

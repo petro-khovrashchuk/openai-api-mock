@@ -1,4 +1,4 @@
-package com.fidelix.coding_club_a.schema_morph;
+package com.fidelix.codingclub.openaiapimock;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

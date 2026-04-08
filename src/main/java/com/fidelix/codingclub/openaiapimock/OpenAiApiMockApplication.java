@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SchemaMorphApplication {
+public class OpenAiApiMockApplication {
 
   static void main(String[] args) {
-    SpringApplication.run(SchemaMorphApplication.class, args);
+    SpringApplication.run(OpenAiApiMockApplication.class, args);
   }
 
 }

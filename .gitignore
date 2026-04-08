@@ -1,0 +1,43 @@
+# Gradle
+.gradle/
+build/
+gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Local configuration (optional, uncomment if you want to exclude local overrides)
+# *.local.properties
+# ~/.m2/settings.xml
+
+# Generated files by Schema Morph and other tools
+target/
+out/
+tmp/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~

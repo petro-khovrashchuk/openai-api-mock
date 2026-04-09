@@ -1,5 +1,15 @@
 package com.fidelix.codingclub.openaiapimock.service;
 
+import static com.fidelix.codingclub.openaiapimock.Constants.ARRAY;
+import static com.fidelix.codingclub.openaiapimock.Constants.BOOLEAN;
+import static com.fidelix.codingclub.openaiapimock.Constants.INTEGER;
+import static com.fidelix.codingclub.openaiapimock.Constants.ITEMS;
+import static com.fidelix.codingclub.openaiapimock.Constants.OBJECT;
+import static com.fidelix.codingclub.openaiapimock.Constants.PROPERTIES;
+import static com.fidelix.codingclub.openaiapimock.Constants.STRING;
+import static com.fidelix.codingclub.openaiapimock.Constants.TYPE;
+
+import com.fidelix.codingclub.openaiapimock.Constants;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.springframework.stereotype.Service;
@@ -10,22 +20,22 @@ import tools.jackson.databind.node.ObjectNode;
 
 @Service
 @RequiredArgsConstructor
-public class MockDataGeneratorImpl implements MockDataGenerator {
+public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
 
   private final Faker faker;
   private final JsonNodeFactory nodeFactory;
 
   @Override
   public JsonNode generateData(final JsonNode schema) {
-    String type = schema.has("type") ? schema.get("type").stringValue() : "object";
+    String type = schema.has(TYPE) ? schema.get(TYPE).stringValue() : OBJECT;
 
     return switch (type) {
-      case "object" -> generateObject(schema.get("properties"));
-      case "array" -> generateArray(schema.get("items"));
-      case "string" -> nodeFactory.stringNode(faker.lorem().word());
-      case "integer", "number" -> nodeFactory.numberNode(faker.number().randomDigit());
-      case "boolean" -> nodeFactory.booleanNode(faker.bool().bool());
-      default -> nodeFactory.stringNode("mock-value");
+      case OBJECT -> generateObject(schema.get(PROPERTIES));
+      case ARRAY -> generateArray(schema.get(ITEMS));
+      case STRING -> nodeFactory.stringNode(faker.lorem().word());
+      case INTEGER, Constants.NUMBER -> nodeFactory.numberNode(faker.number().randomDigit());
+      case BOOLEAN -> nodeFactory.booleanNode(faker.bool().bool());
+      default -> nodeFactory.stringNode(Constants.MOCK_VALUE);
     };
   }
 

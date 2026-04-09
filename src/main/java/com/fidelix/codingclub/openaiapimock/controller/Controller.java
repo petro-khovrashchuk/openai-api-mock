@@ -25,11 +25,11 @@ public class Controller {
   @PostMapping(Constants.COMPLETIONS)
   public Response createMockResponseBasedOnRequest(final @RequestBody Request request) {
     return (request.responseFormat() == null)
-        ? createResponseForRequestWithoutResponseFormat(request)
-        : createResponseForRequestWithResponseFormat(request);
+        ? createResponse(request)
+        : createFormattedResponse(request);
   }
 
-  private Response createResponseForRequestWithResponseFormat(final Request request) {
+  private Response createFormattedResponse(final Request request) {
     final JsonNode schema = request.responseFormat().at(Constants.JSON_SCHEMA_PATH);
 
     final String content = mockDataGenerator.generateContentBasedOnSchema(schema);
@@ -38,7 +38,7 @@ public class Controller {
     return createResponse(model, content);
   }
 
-  private Response createResponseForRequestWithoutResponseFormat(final Request request) {
+  private Response createResponse(final Request request) {
     final String model = request.model();
     final String content = mockDataGenerator.generateContent();
     return createResponse(model, content);

@@ -4,7 +4,7 @@ import tools.jackson.databind.JsonNode;
 
 public interface MockDataGeneratorService {
 
-  String generateString();
+  String generateContent();
 
-  JsonNode generateData(JsonNode schema);
+  String generateContentBasedOnSchema(JsonNode schema);
 }

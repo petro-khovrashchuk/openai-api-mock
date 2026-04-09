@@ -26,12 +26,17 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
   private final JsonNodeFactory nodeFactory;
 
   @Override
-  public String generateString() {
+  public String generateContent() {
     return faker.lorem().word();
   }
 
   @Override
-  public JsonNode generateData(final JsonNode schema) {
+  public String generateContentBasedOnSchema(final JsonNode schema) {
+    final JsonNode generateContent = recursivelyGenerateData(schema);
+    return generateContent.toString();
+  }
+
+  private JsonNode recursivelyGenerateData(final JsonNode schema) {
     final String type = schema.has(TYPE) ? schema.get(TYPE).stringValue() : OBJECT;
 
     return switch (type) {
@@ -48,7 +53,7 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
     final ObjectNode node = nodeFactory.objectNode();
     if (properties != null && properties.isObject()) {
       properties.properties().forEach(entry ->
-          node.set(entry.getKey(), generateData(entry.getValue())));
+          node.set(entry.getKey(), recursivelyGenerateData(entry.getValue())));
     }
     return node;
   }
@@ -58,7 +63,7 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
     // Generate a random list size between 1 and 3
     final int size = faker.number().numberBetween(1, 4);
     for (int i = 0; i < size; i++) {
-      array.add(generateData(itemsSchema));
+      array.add(recursivelyGenerateData(itemsSchema));
     }
     return array;
   }

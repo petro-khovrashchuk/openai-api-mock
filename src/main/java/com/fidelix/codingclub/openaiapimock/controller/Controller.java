@@ -32,15 +32,15 @@ public class Controller {
   private Response createResponseForRequestWithResponseFormat(final Request request) {
     final JsonNode schema = request.responseFormat().at(Constants.JSON_SCHEMA_PATH);
 
-    final JsonNode generatedContent = mockDataGenerator.generateData(schema);
+    final String content = mockDataGenerator.generateContentBasedOnSchema(schema);
 
     final String model = request.model();
-    return createResponse(model, generatedContent.toString());
+    return createResponse(model, content);
   }
 
   private Response createResponseForRequestWithoutResponseFormat(final Request request) {
     final String model = request.model();
-    final String content = mockDataGenerator.generateString();
+    final String content = mockDataGenerator.generateContent();
     return createResponse(model, content);
   }
 

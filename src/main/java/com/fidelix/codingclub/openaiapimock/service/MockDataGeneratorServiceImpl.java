@@ -26,6 +26,11 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
   private final JsonNodeFactory nodeFactory;
 
   @Override
+  public String generateString() {
+    return faker.lorem().word();
+  }
+
+  @Override
   public JsonNode generateData(final JsonNode schema) {
     final String type = schema.has(TYPE) ? schema.get(TYPE).stringValue() : OBJECT;
 

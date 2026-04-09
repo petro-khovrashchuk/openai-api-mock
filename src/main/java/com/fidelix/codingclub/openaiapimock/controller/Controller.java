@@ -7,7 +7,6 @@ import com.fidelix.codingclub.openaiapimock.dto.Request;
 import com.fidelix.codingclub.openaiapimock.dto.Response;
 import com.fidelix.codingclub.openaiapimock.dto.Usage;
 import com.fidelix.codingclub.openaiapimock.service.MockDataGeneratorServiceImpl;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,35 +20,47 @@ import tools.jackson.databind.JsonNode;
 @RequiredArgsConstructor
 public class Controller {
 
-  private final MockDataGeneratorServiceImpl generator;
+  private final MockDataGeneratorServiceImpl mockDataGenerator;
 
   @PostMapping(Constants.COMPLETIONS)
   public Response createMockResponseBasedOnRequest(final @RequestBody Request request) {
-    final JsonNode schema = request.responseFormat().at(Constants.JSON_SCHEMA_PATH);
-
-    final JsonNode generatedContent = generator.generateData(schema);
-
-    final String model = request.model();
-    return createResponse(model, generatedContent);
+    return (request.responseFormat() == null)
+        ? createResponseForRequestWithoutResponseFormat(request)
+        : createResponseForRequestWithResponseFormat(request);
   }
 
-  private Response createResponse(final String model, final JsonNode generatedContent) {
+  private Response createResponseForRequestWithResponseFormat(final Request request) {
+    final JsonNode schema = request.responseFormat().at(Constants.JSON_SCHEMA_PATH);
+
+    final JsonNode generatedContent = mockDataGenerator.generateData(schema);
+
+    final String model = request.model();
+    return createResponse(model, generatedContent.toString());
+  }
+
+  private Response createResponseForRequestWithoutResponseFormat(final Request request) {
+    final String model = request.model();
+    final String content = mockDataGenerator.generateString();
+    return createResponse(model, content);
+  }
+
+  private Response createResponse(final String model, final String content) {
     return Response.builder()
         .id(Constants.RESPONSE_ID)
         .object(Constants.RESPONSE_OBJECT)
         .created(Constants.RESPONSE_CREATED)
         .model(model)
-        .choice(createChoice(generatedContent))
+        .choice(createChoice(content))
         .usage(createUsage())
         .build();
   }
 
-  private static @NonNull Choice createChoice(final JsonNode generatedContent) {
+  private static @NonNull Choice createChoice(final String generatedContent) {
     return new Choice(0, createMessage(generatedContent), Constants.CHOICE_FINISH_REASON);
   }
 
-  private static @NonNull Message createMessage(final JsonNode generatedContent) {
-    return new Message(Constants.MESSAGE_ROLE, generatedContent.toString());
+  private static @NonNull Message createMessage(final String generatedContent) {
+    return new Message(Constants.MESSAGE_ROLE, generatedContent);
   }
 
   private @NonNull Usage createUsage() {

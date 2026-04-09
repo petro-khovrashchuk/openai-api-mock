@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'application'
 	id 'org.springframework.boot' version '4.0.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -17,6 +18,10 @@ repositories {
 	mavenCentral()
 }
 
+application {
+	mainClass = 'com.fidelix.codingclub.openaiapimock.OpenAiApiMockApplication'
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'net.datafaker:datafaker:2.5.4'
@@ -29,6 +34,41 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+// Ensure the Fat Jar is what gets packaged
+distributions {
+	main {
+		contents {
+			from(bootJar) {
+				into "lib"
+			}
+		}
+	}
+}
+
+tasks.register('createExe', Exec) {
+	dependsOn installDist
+
+	// This ensures we get the toolchain path without the IDE "metadata" error
+	def javaToolchainService = project.extensions.getByType(JavaToolchainService)
+	def launcherProvider = javaToolchainService.launcherFor(java.toolchain)
+
+	doFirst {
+		def launcher = launcherProvider.get()
+		def javaHome = launcher.metadata.installationPath.asFile.absolutePath
+		def jpackagePath = "${javaHome}/bin/jpackage.exe"
+
+		workingDir project.projectDir
+
+		commandLine jpackagePath,
+				'--type', 'app-image',
+				'--dest', "${layout.buildDirectory.get().asFile}/dist",
+				'--name', 'OpenAiApiMocker',
+				'--main-jar', "${project.name}-${version}.jar",
+				'--main-class', 'com.fidelix.codingclub.openaiapimock.OpenAiApiMockApplication',
+				'--input', "${layout.buildDirectory.get().asFile}/install/${project.name}/lib",
+				'--win-console',
+				'--app-version', '0.0.1',
+				'--add-modules', 'java.base,java.instrument,jdk.unsupported,java.naming,java.management,java.desktop,java.sql,java.xml,java.prefs,java.security.jgss,java.security.sasl,java.net.http'
+				'--verbose'
+	}
 }

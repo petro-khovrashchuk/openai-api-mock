@@ -1,7 +1,6 @@
 # Gradle
 .gradle/
 build/
-gradlew.bat
 !gradle/wrapper/gradle-wrapper.jar
 
 # IntelliJ IDEA

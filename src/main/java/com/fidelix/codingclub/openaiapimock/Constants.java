@@ -22,7 +22,6 @@ public interface Constants {
   String RESPONSE_ID = "mock-1";
   String RESPONSE_OBJECT = "chat.completion";
   int RESPONSE_CREATED = 123;
-  int CREATED = 123;
   String CHOICE_FINISH_REASON = "stop";
   String MESSAGE_ROLE = "assistant";
 

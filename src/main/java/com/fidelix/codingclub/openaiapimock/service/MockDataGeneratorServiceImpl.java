@@ -27,7 +27,7 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
 
   @Override
   public JsonNode generateData(final JsonNode schema) {
-    String type = schema.has(TYPE) ? schema.get(TYPE).stringValue() : OBJECT;
+    final String type = schema.has(TYPE) ? schema.get(TYPE).stringValue() : OBJECT;
 
     return switch (type) {
       case OBJECT -> generateObject(schema.get(PROPERTIES));
@@ -40,7 +40,7 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
   }
 
   private ObjectNode generateObject(final JsonNode properties) {
-    ObjectNode node = nodeFactory.objectNode();
+    final ObjectNode node = nodeFactory.objectNode();
     if (properties != null && properties.isObject()) {
       properties.properties().forEach(entry ->
           node.set(entry.getKey(), generateData(entry.getValue())));
@@ -49,9 +49,9 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
   }
 
   private ArrayNode generateArray(final JsonNode itemsSchema) {
-    ArrayNode array = nodeFactory.arrayNode();
+    final ArrayNode array = nodeFactory.arrayNode();
     // Generate a random list size between 1 and 3
-    int size = faker.number().numberBetween(1, 4);
+    final int size = faker.number().numberBetween(1, 4);
     for (int i = 0; i < size; i++) {
       array.add(generateData(itemsSchema));
     }

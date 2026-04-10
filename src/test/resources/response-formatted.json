@@ -1,0 +1,16 @@
+{
+  "id": "mock-1",
+  "object": "chat.completion",
+  "created": 123,
+  "model": "model-1",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\"steps\":\"steps_value\",\"final_answer\":\"final_answer_value\"}"
+      },
+      "finish_reason": "stop"
+    }
+  ]
+}

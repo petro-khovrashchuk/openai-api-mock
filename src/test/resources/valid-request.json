@@ -1,0 +1,9 @@
+{
+  "model": "model-1",
+  "messages": [
+    {
+      "role": "user",
+      "content": "solve"
+    }
+  ]
+}

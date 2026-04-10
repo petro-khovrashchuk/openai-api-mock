@@ -1,0 +1,25 @@
+{
+  "model": "model-1",
+  "messages": [
+    {
+      "role": "user",
+      "content": "solve"
+    }
+  ],
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "math_response",
+      "strict": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "steps": { "type": "string" },
+          "final_answer": { "type": "string" }
+        },
+        "required": ["steps", "final_answer"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

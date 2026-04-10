@@ -5,6 +5,7 @@ import static com.fidelix.codingclub.openaiapimock.Constants.ARRAY;
 import static com.fidelix.codingclub.openaiapimock.Constants.BOOLEAN;
 import static com.fidelix.codingclub.openaiapimock.Constants.INTEGER;
 import static com.fidelix.codingclub.openaiapimock.Constants.ITEMS;
+import static com.fidelix.codingclub.openaiapimock.Constants.MOCK_VALUE;
 import static com.fidelix.codingclub.openaiapimock.Constants.NUMBER;
 import static com.fidelix.codingclub.openaiapimock.Constants.OBJECT;
 import static com.fidelix.codingclub.openaiapimock.Constants.ONE_OF;
@@ -12,7 +13,6 @@ import static com.fidelix.codingclub.openaiapimock.Constants.PROPERTIES;
 import static com.fidelix.codingclub.openaiapimock.Constants.STRING;
 import static com.fidelix.codingclub.openaiapimock.Constants.TYPE;
 
-import com.fidelix.codingclub.openaiapimock.Constants;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.springframework.stereotype.Service;
@@ -48,18 +48,17 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
       case STRING -> nodeFactory.stringNode(faker.lorem().word());
       case INTEGER, NUMBER -> nodeFactory.numberNode(faker.number().randomDigit());
       case BOOLEAN -> nodeFactory.booleanNode(faker.bool().bool());
-      case ONE_OF -> recursivelyGenerateData(getFirst(node.get(ONE_OF)));
-      case ANY_OF -> recursivelyGenerateData(getFirst(node.get(ANY_OF)));
-      default -> nodeFactory.stringNode(Constants.MOCK_VALUE);
+      case ONE_OF, ANY_OF -> recursivelyGenerateData(getFirst(node.get(type)));
+      default -> nodeFactory.stringNode(MOCK_VALUE);
     };
   }
 
   private static String parseNodeType(final JsonNode node) {
     if (node.has(TYPE)) {
       return node.get(TYPE).stringValue();
-    } else if (node.has(Constants.ONE_OF) && node.get(Constants.ONE_OF).size() > 0) {
+    } else if (node.has(ONE_OF) && node.get(ONE_OF).size() > 0) {
       return ONE_OF;
-    } else if (node.has(Constants.ANY_OF) && node.get(Constants.ANY_OF).size() > 0) {
+    } else if (node.has(ANY_OF) && node.get(ANY_OF).size() > 0) {
       return ANY_OF;
     } else {
       return OBJECT;

@@ -1,0 +1,7 @@
+{
+  "properties": {
+    "fallback": {
+      "type": "string"
+    }
+  }
+}

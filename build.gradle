@@ -12,29 +12,66 @@ java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(26)
 	}
+	sourceCompatibility = JavaVersion.VERSION_26  // Explicit for Spring Boot
 }
 
 repositories {
 	mavenCentral()
 }
 
+java {
+	sourceSets {
+		main {
+			java {
+				srcDirs = ['src/main/java']
+			}
+		}
+		test {
+			java {
+				srcDirs = ['src/test/java']
+			}
+		}
+	}
+}
+
+dependencies {
+	// Spring Boot Runtime
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'net.datafaker:datafaker:2.5.4'
+
+	// Lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Development only
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Test Dependencies
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation 'org.assertj:assertj-core:3.27.7'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+}
+
 application {
 	mainClass = 'com.fidelix.codingclub.openaiapimock.OpenAiApiMockApplication'
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	implementation 'net.datafaker:datafaker:2.5.4'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-	testCompileOnly 'org.projectlombok:lombok'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+// Test Configuration - CRITICAL for JUnit 6 discovery
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "PASSED", "SKIPPED", "FAILED"
+	}
 }
 
-// Ensure the Fat Jar is what gets packaged
+// Boot JAR for distributions
+bootJar {
+	archiveClassifier = 'boot'
+}
+
+// Distributions - package boot JAR
 distributions {
 	main {
 		contents {
@@ -45,10 +82,10 @@ distributions {
 	}
 }
 
+// Custom jpackage task - FIXED syntax error (missing comma)
 tasks.register('createExe', Exec) {
 	dependsOn installDist
 
-	// This ensures we get the toolchain path without the IDE "metadata" error
 	def javaToolchainService = project.extensions.getByType(JavaToolchainService)
 	def launcherProvider = javaToolchainService.launcherFor(java.toolchain)
 
@@ -57,18 +94,18 @@ tasks.register('createExe', Exec) {
 		def javaHome = launcher.metadata.installationPath.asFile.absolutePath
 		def jpackagePath = "${javaHome}/bin/jpackage.exe"
 
-		workingDir project.projectDir
+		workingDir = project.projectDir
 
 		commandLine jpackagePath,
 				'--type', 'app-image',
-				'--dest', "${layout.buildDirectory.get().asFile}/dist",
+				'--dest', "${layout.buildDirectory.dir('dist')}",
 				'--name', 'OpenAiApiMocker',
 				'--main-jar', "${project.name}-${version}.jar",
 				'--main-class', 'com.fidelix.codingclub.openaiapimock.OpenAiApiMockApplication',
-				'--input', "${layout.buildDirectory.get().asFile}/install/${project.name}/lib",
+				'--input', "${layout.buildDirectory.dir("install/${project.name}/lib")}",
 				'--win-console',
 				'--app-version', '0.0.1',
-				'--add-modules', 'java.base,java.instrument,jdk.unsupported,java.naming,java.management,java.desktop,java.sql,java.xml,java.prefs,java.security.jgss,java.security.sasl,java.net.http'
+				'--add-modules', 'java.base,java.instrument,jdk.unsupported,java.naming,java.management,java.desktop,java.sql,java.xml,java.prefs,java.security.jgss,java.security.sasl,java.net.http',
 				'--verbose'
 	}
 }

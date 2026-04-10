@@ -64,4 +64,15 @@ class ControllerTest {
         .andExpect(content().json(readResourceContent("response.json")));
   }
 
+  @Test
+  void createMockResponseBasedOnRequest_whenCalledWithInvalidRequest_shouldReturnBadRequest()
+      throws Exception {
+
+    // Act & Assert
+    mockMvc.perform(post(Constants.V1_CHAT_COMPLETIONS)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content("INVALID"))
+        .andExpect(status().isBadRequest());
+  }
+
 }

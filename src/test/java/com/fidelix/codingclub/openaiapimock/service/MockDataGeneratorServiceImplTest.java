@@ -33,7 +33,7 @@ class MockDataGeneratorServiceImplTest {
   private ObjectMapper objectMapper;
 
   @Test
-  void generateContent_whenwhenCalled_returnsNotBlankString() {
+  void generateContent_whenCalled_returnsNotBlankString() {
     // Arrange & Act
     final String content = mockDataGenerator.generateContent();
 

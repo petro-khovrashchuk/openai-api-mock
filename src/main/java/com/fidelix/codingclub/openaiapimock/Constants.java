@@ -17,6 +17,7 @@ public interface Constants {
   // API endpoints
   String V1_CHAT = "/v1/chat";
   String COMPLETIONS = "/completions";
+  String V1_CHAT_COMPLETIONS = V1_CHAT + COMPLETIONS;
 
   // DTOs constants
   String RESPONSE_ID = "mock-1";

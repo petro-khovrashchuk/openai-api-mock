@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fidelix.codingclub.openaiapimock.Constants;
 import com.fidelix.codingclub.openaiapimock.service.MockDataGeneratorServiceImpl;
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +23,6 @@ import org.springframework.util.ResourceUtils;
 @WebMvcTest
 class ControllerTest {
 
-  private static final String V1_CHAT_COMPLETIONS = "/v1/chat/completions";
-
   @Autowired
   private MockMvc mockMvc;
 
@@ -38,7 +37,7 @@ class ControllerTest {
         .thenReturn("{\"steps\":\"steps_value\",\"final_answer\":\"final_answer_value\"}");
 
     // Act & Assert
-    mockMvc.perform(post(V1_CHAT_COMPLETIONS)
+    mockMvc.perform(post(Constants.V1_CHAT_COMPLETIONS)
             .contentType(MediaType.APPLICATION_JSON)
             .content(readResourceContent("valid-request-formatted.json")))
         .andExpect(status().isOk())
@@ -58,7 +57,7 @@ class ControllerTest {
         .thenReturn("content_value");
 
     // Act & Assert
-    mockMvc.perform(post(V1_CHAT_COMPLETIONS)
+    mockMvc.perform(post(Constants.V1_CHAT_COMPLETIONS)
             .contentType(MediaType.APPLICATION_JSON)
             .content(readResourceContent("valid-request.json")))
         .andExpect(status().isOk())

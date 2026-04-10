@@ -10,7 +10,6 @@ public record Response(
     String object,
     long created,
     String model,
-    @Singular List<Choice> choices,
-    Usage usage) {
+    @Singular List<Choice> choices) {
 
 }

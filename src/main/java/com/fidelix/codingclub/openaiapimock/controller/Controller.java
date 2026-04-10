@@ -5,7 +5,6 @@ import com.fidelix.codingclub.openaiapimock.dto.Choice;
 import com.fidelix.codingclub.openaiapimock.dto.Message;
 import com.fidelix.codingclub.openaiapimock.dto.Request;
 import com.fidelix.codingclub.openaiapimock.dto.Response;
-import com.fidelix.codingclub.openaiapimock.dto.Usage;
 import com.fidelix.codingclub.openaiapimock.service.MockDataGeneratorServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
@@ -51,7 +50,6 @@ public class Controller {
         .created(Constants.RESPONSE_CREATED)
         .model(model)
         .choice(createChoice(content))
-        .usage(createUsage())
         .build();
   }
 
@@ -61,10 +59,6 @@ public class Controller {
 
   private static @NonNull Message createMessage(final String generatedContent) {
     return new Message(Constants.MESSAGE_ROLE, generatedContent);
-  }
-
-  private @NonNull Usage createUsage() {
-    return new Usage(0, 0, 0);
   }
 
 }

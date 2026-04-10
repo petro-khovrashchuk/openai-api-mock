@@ -1,10 +1,13 @@
 package com.fidelix.codingclub.openaiapimock.service;
 
+import static com.fidelix.codingclub.openaiapimock.Constants.ANY_OF;
 import static com.fidelix.codingclub.openaiapimock.Constants.ARRAY;
 import static com.fidelix.codingclub.openaiapimock.Constants.BOOLEAN;
 import static com.fidelix.codingclub.openaiapimock.Constants.INTEGER;
 import static com.fidelix.codingclub.openaiapimock.Constants.ITEMS;
+import static com.fidelix.codingclub.openaiapimock.Constants.NUMBER;
 import static com.fidelix.codingclub.openaiapimock.Constants.OBJECT;
+import static com.fidelix.codingclub.openaiapimock.Constants.ONE_OF;
 import static com.fidelix.codingclub.openaiapimock.Constants.PROPERTIES;
 import static com.fidelix.codingclub.openaiapimock.Constants.STRING;
 import static com.fidelix.codingclub.openaiapimock.Constants.TYPE;
@@ -36,17 +39,35 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
     return generateContent.toString();
   }
 
-  private JsonNode recursivelyGenerateData(final JsonNode schema) {
-    final String type = schema.has(TYPE) ? schema.get(TYPE).stringValue() : OBJECT;
+  private JsonNode recursivelyGenerateData(final JsonNode node) {
+    final String type = parseNodeType(node);
 
     return switch (type) {
-      case OBJECT -> generateObject(schema.get(PROPERTIES));
-      case ARRAY -> generateArray(schema.get(ITEMS));
+      case OBJECT -> generateObject(node.get(PROPERTIES));
+      case ARRAY -> generateArray(node.get(ITEMS));
       case STRING -> nodeFactory.stringNode(faker.lorem().word());
-      case INTEGER, Constants.NUMBER -> nodeFactory.numberNode(faker.number().randomDigit());
+      case INTEGER, NUMBER -> nodeFactory.numberNode(faker.number().randomDigit());
       case BOOLEAN -> nodeFactory.booleanNode(faker.bool().bool());
+      case ONE_OF -> recursivelyGenerateData(getFirst(node.get(ONE_OF)));
+      case ANY_OF -> recursivelyGenerateData(getFirst(node.get(ANY_OF)));
       default -> nodeFactory.stringNode(Constants.MOCK_VALUE);
     };
+  }
+
+  private static String parseNodeType(final JsonNode node) {
+    if (node.has(TYPE)) {
+      return node.get(TYPE).stringValue();
+    } else if (node.has(Constants.ONE_OF) && node.get(Constants.ONE_OF).size() > 0) {
+      return ONE_OF;
+    } else if (node.has(Constants.ANY_OF) && node.get(Constants.ANY_OF).size() > 0) {
+      return ANY_OF;
+    } else {
+      return OBJECT;
+    }
+  }
+
+  private static JsonNode getFirst(final JsonNode node) {
+    return node.get(0);
   }
 
   private ObjectNode generateObject(final JsonNode properties) {
@@ -60,7 +81,6 @@ public class MockDataGeneratorServiceImpl implements MockDataGeneratorService {
 
   private ArrayNode generateArray(final JsonNode itemsSchema) {
     final ArrayNode array = nodeFactory.arrayNode();
-    // Generate a random list size between 1 and 3
     final int size = faker.number().numberBetween(1, 4);
     for (int i = 0; i < size; i++) {
       array.add(recursivelyGenerateData(itemsSchema));

@@ -12,6 +12,8 @@ public interface Constants {
   String INTEGER = "integer";
   String NUMBER = "number";
   String BOOLEAN = "boolean";
+  String ONE_OF = "oneOf";
+  String ANY_OF = "anyOf";
   String MOCK_VALUE = "mock-value";
 
   // API endpoints
@@ -22,7 +24,7 @@ public interface Constants {
   // DTOs constants
   String RESPONSE_ID = "mock-1";
   String RESPONSE_OBJECT = "chat.completion";
-  int RESPONSE_CREATED = 123;
+  int RESPONSE_CREATED = 1;
   String CHOICE_FINISH_REASON = "stop";
   String MESSAGE_ROLE = "assistant";
 
